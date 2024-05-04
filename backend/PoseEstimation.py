@@ -16,6 +16,6 @@ class PoseEstimation:
         pass
 
     def predict(self, video_path):
-        results = self.model(video_path)
+        results = self.model(video_path, conf=0.7)
         return results
 
