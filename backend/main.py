@@ -1,7 +1,6 @@
 from PoseEstimation import *
 import cv2
 
-
 if __name__ == "__main__":
 
     # load a pre-trained model for Pose Estimation
@@ -16,8 +15,6 @@ if __name__ == "__main__":
     rightArmAngleDifferences = []
     leftArmAngleDifferences = []
     backLegAngleDifferences = []
-
-
 
     # Loop through the video frames
     while cap.isOpened():
@@ -43,11 +40,10 @@ if __name__ == "__main__":
                 keypoints_numpy = keypoints.xyn.cpu().numpy()[0]
                 print(keypoints_numpy)
 
-                #Add datapoints to arrays
-                #Add
+                # Add datapoints to arrays
+                # Add
             else:
                 print("No keypoints attribute found in the results.")
-
 
             # Break the loop if 'q' is pressed
             if cv2.waitKey(1) & 0xFF == ord("q"):
