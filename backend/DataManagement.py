@@ -1,6 +1,7 @@
 from ultralytics import YOLO
 import numpy, scipy.optimize
 
+
 class DataManagement(object):
 
     def __init__(self, filename):
@@ -14,7 +15,7 @@ class DataManagement(object):
         results = model.predict(self.filename)
         person_count = 0
         for detection in results[0]:
-            if detection.cls == 'person':
+            if detection.names[0] == 'person':
                 person_count += 1
                 if person_count > 1:
                     return False
@@ -23,6 +24,9 @@ class DataManagement(object):
         return True
 
     def calculate_period_phase(self, time_array, y_array):
+        """
+
+        """
         time_array = numpy.array(time_array)
         y_array = numpy.array(y_array)
         ff = numpy.fft.fftfreq(len(time_array), (time_array[1] - time_array[0]))

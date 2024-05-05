@@ -4,7 +4,7 @@ import numpy as np
 def distance(p1, p2):
     """ Given points, p1 and p2, find the distance between two points
     Args:
-        p1, p2 - points given as a tuple corresponding to the
+        p1, p2 - points given as a np.array corresponding to the
         (x, y)-coordinates
     Returns:
         distance between p1 and p2
@@ -15,7 +15,7 @@ def distance(p1, p2):
 def angle(p1, p2, p3):
     """Given three points, p1, p2, p3, calculate the angle formed
     Args:
-        p1, p2, p3 - points given as a tuple corresponding to
+        p1, p2, p3 - points given as a np.array corresponding to
         (x, y)-coordinates
     Returns:
         angle formed from the line segments formed from p1, p2, p3
@@ -29,7 +29,7 @@ def angle(p1, p2, p3):
 def arm_angle_difference(shoulder, elbow, wrist):
     """
     Args:
-        shoulder, elbow, wrist - points given as a tuple corresponding to
+        shoulder, elbow, wrist - points given as a np.array corresponding to
         (x, y)-coordinates
     Returns:
         the absolute difference between current arm angle and 90 degrees,
@@ -41,7 +41,7 @@ def arm_angle_difference(shoulder, elbow, wrist):
 def leg_angle_difference(hip, knee, ankle):
     """
     Args:
-        hip, knee, ankle - points given as a tuple corresponding to
+        hip, knee, ankle - points given as a np.array corresponding to
         (x, y)-coordinates
     Returns:
         the absolute difference between current arm angle and 180 degrees, the ideal arm angle
