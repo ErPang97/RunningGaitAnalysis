@@ -1,13 +1,41 @@
 # RunningGaitAnalysis
 
-## Installation
+
+## **Running Gait YOLOv8 Analyzer**
+
+
+## **Overview**
+
+**Project Summary**
+
+TODO: 
+
+**Authors**
+
+TODO: add devpost ID's
+
+- Ryan Lim Pangilinan - Devpost ID – Penn email - [GitHub](https://github.com/ErPang97)
+- Samuel Lee - Devpost ID – Penn email - [GitHub](https://github.com/leesamuel423)
+- Cara Ma - Devpost ID – Penn email - [GitHub](https://github.com/carateoong)
+- Katherine Zhang - Devpost ID – Penn email - [GitHub](https://github.com/zhkat)
+
+
+## **Usage**
+
+TODO: 
+
+### **Prerequisites** 
+
+TODO:
+
+### **Installation**
 
 Ensure you have Python 3.8+ and pip installed on your system. Follow these steps to install:
 
 1. Clone the project repository:
 
 ```bash
-git clone https://
+git clone https://github.com/ErPang97/RunningGaitAnalysis
 cd RunningGaitAnalysis
 ```
 
@@ -36,3 +64,21 @@ venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
+
+### **Deployment**
+
+TODO:
+
+## **Additional information**
+
+### **Tools used**
+
+TODO:
+
+## **Acknowledgments**
+
+TODO:
+
+## **License**
+
+TODO:
