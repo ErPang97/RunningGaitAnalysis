@@ -14,22 +14,27 @@ class Processor(object):
         calculates average arm angle difference from ideal 90 degrees for right and left arms
         :return: 2-tuple, in which first value is average right arm angle difference from 90 degrees and second value is left arm angle difference from 90 degrees
         """
-        if self.data is None:
-            return None
+        try:
+            if self.data is None:
+                return None
 
-        n = len(self.data['right_shoulder'])
-        right_arm_angle_difference = 0
-        left_arm_angle_difference = 0
-        for i in range(n):
-            right_arm_angle_difference += Processor._arm_angle_difference(self.data['right_shoulder'][i],
-                                                                           self.data['right_elbow'][i],
-                                                                           self.data['right_wrist'][i])
-            left_arm_angle_difference += Processor._arm_angle_difference(self.data['left_shoulder'][i],
-                                                                          self.data['left_elbow'][i],
-                                                                          self.data['left_wrist'][i])
-        right_arm_angle_difference /= n
-        left_arm_angle_difference /= n
-        return right_arm_angle_difference, left_arm_angle_difference
+            n = len(self.data['right_shoulder'])
+            right_arm_angle_difference = 0
+            left_arm_angle_difference = 0
+            for i in range(n):
+                right_arm_angle_difference += Processor._arm_angle_difference(self.data['right_shoulder'][i],
+                                                                               self.data['right_elbow'][i],
+                                                                               self.data['right_wrist'][i])
+                left_arm_angle_difference += Processor._arm_angle_difference(self.data['left_shoulder'][i],
+                                                                              self.data['left_elbow'][i],
+                                                                              self.data['left_wrist'][i])
+            right_arm_angle_difference /= n
+            left_arm_angle_difference /= n
+            return right_arm_angle_difference, left_arm_angle_difference
+        except:
+            print(f"Error in arm analytics: {e}")
+            return 0, 0
+
 
     def feet_analytics(self):
         """

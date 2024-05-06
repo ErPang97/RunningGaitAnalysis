@@ -1,6 +1,6 @@
 import torch
 from ultralytics import YOLO
-import numpy, scipy.optimize
+import numpy as np
 import cv2
 import math
 
@@ -12,11 +12,11 @@ class VideoReader(object):
 
     def get_data(self):
         """
-        extracts keypoint data from frames of video and calculates gait data
-        :return: dictionary containing list of keypoints for right and left shoulder, elbow, wrist, hip, knee, and ankle and right and left gait duration and start
+        Extracts keypoint data from frames of video and calculates gait data.
+        :return: Dictionary containing list of keypoints for right and left shoulder, elbow, wrist, hip, knee, and ankle and right and left gait duration and start.
         """
-        # Check if there is one person in video
-        if not self._detect_person:
+        # Check if there is one person in the video
+        if not self._detect_person():
             return None
 
         # Open the video file
@@ -26,7 +26,7 @@ class VideoReader(object):
         model_path = "yolov8n-pose.pt"
         pose_model = YOLO(model_path)
 
-        # Initialize dictionary for store data
+        # Initialize dictionary to store data
         data = {'right_shoulder': [], 'right_elbow': [], 'right_wrist': [],
                 'left_shoulder': [], 'left_elbow': [], 'left_wrist': [],
                 'right_hip': [], 'right_knee': [], 'right_ankle': [],
@@ -39,7 +39,11 @@ class VideoReader(object):
             success, frame = cap.read()
 
             if success:
+                # Convert frame to tensor
                 frame_tensor = torch.from_numpy(frame)
+                frame_tensor = frame_tensor.permute(2, 0, 1)  # Change to NCHW format
+                frame_tensor = frame_tensor.float() / 255.0  # Normalize pixel values to [0, 1]
+                frame_tensor = frame_tensor.unsqueeze(0)  # Add batch dimension
 
                 # Run YOLOv8 inference on the frame
                 results = pose_model.model(frame_tensor)
@@ -50,27 +54,11 @@ class VideoReader(object):
                 # Display the annotated frame
                 cv2.imshow("YOLOv8 Inference", annotated_frame)
 
-                # Check if the keypoints attribute is present in the results
-                if hasattr(results[0], 'keypoints'):
-                    # Access the keypoints for the first detected object
-                    keypoints = results[0].keypoints
-                    # Convert keypoints to numpy array and access the keypoints for the first detected object
-                    # Should only have 1 object because we only have 1 person running
-                    keypoints_numpy = keypoints.xyn.cpu().numpy()[0]
+                # Extract keypoints from YOLOv8 results
+                keypoints = self.extract_keypoints(results)
 
-                    # Add datapoints to arrays
-                    data['right_shoulder'].append(keypoints_numpy[6])
-                    data['right_elbow'].append(keypoints_numpy[8])
-                    data['right_wrist'].append(keypoints_numpy[10])
-                    data['left_shoulder'].append(keypoints_numpy[5])
-                    data['left_elbow'].append(keypoints_numpy[7])
-                    data['left_wrist'].append(keypoints_numpy[9])
-                    data['right_hip'].append(keypoints_numpy[12])
-                    data['right_knee'].append(keypoints_numpy[14])
-                    data['right_ankle'].append(keypoints_numpy[16])
-                    data['left_hip'].append(keypoints_numpy[11])
-                    data['left_knee'].append(keypoints_numpy[13])
-                    data['left_ankle'].append(keypoints_numpy[15])
+                # Add keypoints to data dictionary
+                self.add_keypoints_to_data(keypoints, data)
 
                 # Break the loop if 'q' is pressed
                 if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -79,24 +67,24 @@ class VideoReader(object):
                 # Break the loop if the end of the video is reached
                 break
 
+ 
+
+        # Calculate gait data
         data['total_frames'] = cap.get(cv2.CAP_PROP_FRAME_COUNT)
         data['fps'] = cap.get(cv2.CAP_PROP_FPS)
+        data['right_gait_duration'], data['right_gait_start'] = self._calculate_period_phase(data['right_ankle'])
+        data['left_gait_duration'], data['left_gait_start'] = self._calculate_period_phase(data['left_ankle'])
 
         # Release the video capture object and close the display window
         cap.release()
-        cv2.destroyAllWindows()
-
-        right_period_phase = VideoReader._calculate_period_phase(data['right_ankle'])
-        data['right_gait_duration'] = right_period_phase['period']
-        data['right_gait_start'] = right_period_phase['phase']
-        left_period_phase = VideoReader._calculate_period_phase(data['left_ankle'])
-        data['left_gait_duration'] = left_period_phase['period']
-        data['left_gait_start'] = left_period_phase['phase']
+        cv2.destroyAllWindows()       
+        print('THIS IS THE DATA--------------', data)
+        return data
 
     def _detect_person(self):
         """
-        determines whether there is one person in image or video
-        :return: True if there is one person in image or video, False otherwise
+        Determines whether there is one person in the image or video.
+        :return: True if there is one person in the image or video, False otherwise.
         """
         model = YOLO('yolov8n.pt')
         results = model.predict(self.filename)
@@ -113,29 +101,55 @@ class VideoReader(object):
     @staticmethod
     def _calculate_period_phase(coordinates):
         """
-        calculates the duration of a gait and the start of one complete gait
-        models y coordinates of ankle to sine function
-        :param: coordinates: list of coordinates of ankle
-        :return: dictionary containing duration of gait (period) and start of one complete gait (phase)
+        Calculates the duration of a gait and the start of one complete gait.
+        Models y coordinates of ankle to sine function.
+        :param coordinates: List of coordinates of ankle.
+        :return: Dictionary containing duration of gait (period) and start of one complete gait (phase).
         """
-        times = numpy.array(range(0, len(coordinates), 1))
-        y_coordinates = []
-        for coordinate in coordinates:
-            y_coordinates.append(coordinate[1])
-        y_coordinates = numpy.array(y_coordinates)
+        times = np.array(range(0, len(coordinates), 1))
+        y_coordinates = np.array([coord[1] for coord in coordinates])
         if len(times) == 0:
-            return {'period': 0, 'phase': 0}
-        ff = numpy.fft.fftfreq(len(times), 1)
-        Fyy = abs(numpy.fft.fft(y_coordinates))
-        guess_frequency = abs(ff[numpy.argmax(Fyy[1:]) + 1])
-        guess_amplitude = numpy.std(y_coordinates) * 2.0 ** 0.5
-        guess_offset = numpy.mean(y_coordinates)
-        guess = numpy.array([guess_amplitude, 2.0 * numpy.pi * guess_frequency, 0.0, guess_offset])
+            return 0, 0
+        ff = np.fft.fftfreq(len(times), 1)
+        Fyy = np.abs(np.fft.fft(y_coordinates))
+        guess_frequency = np.abs(ff[np.argmax(Fyy[1:]) + 1])
+        guess_amplitude = np.std(y_coordinates) * 2.0 ** 0.5
+        guess_offset = np.mean(y_coordinates)
+        guess = np.array([guess_amplitude, 2.0 * np.pi * guess_frequency, 0.0, guess_offset])
 
-        def sine_function(t, A, w, p, c): return A * numpy.sin(w * t + p) + c
+        def sine_function(t, A, w, p, c): return A * np.sin(w * t + p) + c
 
-        popt, pcov = scipy.optimize.curve_fit(sine_function, times, y_coordinates, p0=guess)
-        A, w, p, c = popt
-        f = w / (2.0 * numpy.pi)
+        popt, _ = scipy.optimize.curve_fit(sine_function, times, y_coordinates, p0=guess)
+        A, w, p, _ = popt
+        f = w / (2.0 * np.pi)
         T = 1.0 / f
-        return {'period': T, 'phase': p}
+        return T, p
+
+    @staticmethod
+    def extract_keypoints(results):
+        """
+        Extracts keypoints from YOLOv8 results.
+        :param results: YOLOv8 results.
+        :return: List of keypoints.
+        """
+        if hasattr(results[0], 'keypoints'):
+            return results[0].keypoints.xyn.cpu().numpy()[0]
+        else:
+            return None
+
+    @staticmethod
+    def add_keypoints_to_data(keypoints, data):
+        """
+        Adds keypoints to data dictionary.
+        :param keypoints: List of keypoints.
+        :param data: Data dictionary.
+        """
+        if keypoints is not None:
+            data['right_shoulder'].append(keypoints[6])
+            data['right_elbow'].append(keypoints[8])
+            data['right_wrist'].append(keypoints[10])
+            data['left_shoulder'].append(keypoints[5])
+            data['left_elbow'].append(keypoints[7])
+            data['left_wrist'].append(keypoints[9])
+            data['right_hip'].append(keypoints[12])
+            data['right_knee'].append
