@@ -1,5 +1,5 @@
 import numpy as np
-
+import math
 
 class Processor(object):
 
@@ -126,3 +126,17 @@ class Processor(object):
         """
         # How do we determine which is the back leg? Do we have everyone face one direction?
         return abs(Processor.__angle(hip, knee, ankle) - 180)
+
+    def __calculate_gait_per_minute(self, data):
+        """
+        Args:
+            data: dictionary of data
+        Returns:
+            The number of gaits per minute. Each gait is one step
+        """
+        # Get frames per gait
+        right_gait_duration = data['right_gait_duration']
+        left_gait_duration = data['left_gait_duration']
+        gait_per_frame = 1/(data['total_frames'] / (right_gait_duration + left_gait_duration) * 2)
+
+        return gait_per_frame * data['fps'] * 60
