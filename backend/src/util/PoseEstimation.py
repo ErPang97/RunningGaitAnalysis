@@ -1,9 +1,7 @@
-
-
 from ultralytics import YOLO
 
 
-class PoseEstimation:
+class PoseEstimation(object):
 
     def __init__(self, model_path):
         """Initializes the PoseEstimation model
@@ -27,4 +25,3 @@ class PoseEstimation:
         """
         results = self.model(video_path, conf=0.7)
         return results
-

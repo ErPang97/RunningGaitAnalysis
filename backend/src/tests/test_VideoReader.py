@@ -1,9 +1,8 @@
 import unittest
-from PoseEstimation import *
-from DataManagement import *
+from util.PoseEstimation import *
+from datamanagement.VideoReader import *
 
-
-class TestDataManagement(unittest.TestCase):
+class TestVideoReader(unittest.TestCase):
 
     def test_detect_person(self):
         # test 1:

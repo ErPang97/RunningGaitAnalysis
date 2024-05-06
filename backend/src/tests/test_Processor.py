@@ -1,8 +1,8 @@
 import unittest
-from analytics import *
+from processor.Processsor import *
 
 
-class TestAnalytics(unittest.TestCase):
+class TestProcessor(unittest.TestCase):
 
     def test_distance(self):
         # test 1:
