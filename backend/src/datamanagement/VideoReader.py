@@ -1,6 +1,5 @@
 from ultralytics import YOLO
 import numpy, scipy.optimize
-from util.PoseEstimation import *
 import cv2
 
 
