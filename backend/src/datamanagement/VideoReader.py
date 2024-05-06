@@ -2,6 +2,7 @@ from ultralytics import YOLO
 import numpy, scipy.optimize
 from util.PoseEstimation import *
 import cv2
+import math
 
 class VideoReader(object):
 
@@ -86,6 +87,9 @@ class VideoReader(object):
         data['left_gait_duration'] = left_period_phase['period']
         data['left_gait_start'] = left_period_phase['phase']
 
+        # Calculate gait per minute
+        gait_per_minute = __calculate
+
 
     def __detect_person(self):
         """
@@ -127,3 +131,13 @@ class VideoReader(object):
         f = w / (2. * numpy.pi)
         T = 1. / f
         return {'period': T, 'phase': p}
+
+    def __calculate_gait_per_minute(self, data, cap):
+        # Get total number of frames in the video
+        video_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+
+        #Get number of frames for each gait
+        right_gait_duration = data['right_gait_duration']
+        left_gait_duration = data['left_gait_duration']
+        return math.floor(video_frames /(right_gait_duration + left_gait_duration) * 2)
+
