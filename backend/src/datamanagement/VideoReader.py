@@ -2,6 +2,7 @@ import torch
 from ultralytics import YOLO
 import numpy as np
 import cv2
+import scipy
 import math
 
 
@@ -56,6 +57,7 @@ class VideoReader(object):
 
                 # Extract keypoints from YOLOv8 results
                 keypoints = self.extract_keypoints(results)
+                # print(keypoints)
 
                 # Add keypoints to data dictionary
                 self.add_keypoints_to_data(keypoints, data)
@@ -78,7 +80,6 @@ class VideoReader(object):
         # Release the video capture object and close the display window
         cap.release()
         cv2.destroyAllWindows()       
-        print('THIS IS THE DATA--------------', data)
         return data
 
     def _detect_person(self):
@@ -132,6 +133,7 @@ class VideoReader(object):
         :param results: YOLOv8 results.
         :return: List of keypoints.
         """
+        print('this is the results', results)
         if hasattr(results[0], 'keypoints'):
             return results[0].keypoints.xyn.cpu().numpy()[0]
         else:
