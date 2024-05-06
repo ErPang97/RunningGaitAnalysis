@@ -9,9 +9,10 @@ import { Button } from "./components/ui/button";
 
 function App() {
   const [file, setFile] = useState(null);
+  const [result, setResult] = useState(null);
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
   const handleSubmit = async () => {
@@ -24,12 +25,24 @@ function App() {
     formData.append('file', file);
 
     try {
-      await axios.post('http://127.0.0.1:5000/uploadVideo', formData, {
+      const response = await axios.post('http://127.0.0.1:5000/uploadVideo', formData, {
+      // await axios.post('uploadVideo', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
       // Handle success, e.g., show a success message
+
+      const responseData = response.data
+
+      if (responseData.error) {
+        console.error('Server error:', responseData.error)
+        alert('Server error: ' + responseData.error)
+        return
+      }
+
+      setResult(responseData)
+      
       alert('File uploaded successfully');
     } catch (error) {
       // Handle error, e.g., show an error message
@@ -37,6 +50,8 @@ function App() {
       alert('Error uploading file. Please try again.');
     }
   };
+
+  console.log(result)
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">

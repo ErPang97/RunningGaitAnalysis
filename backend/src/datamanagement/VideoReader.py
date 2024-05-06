@@ -19,7 +19,7 @@ class VideoReader(object):
             return None
 
         # Open the video file
-        cap = cv2.VideoCapture(filename)
+        cap = cv2.VideoCapture(self.filename)
 
         # Load a pre-trained model for Pose Estimation
         model_path = "yolov8n-pose.pt"
