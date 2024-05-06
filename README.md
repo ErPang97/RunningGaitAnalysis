@@ -7,17 +7,28 @@
 ## **Overview**
 
 **Project Summary**
+ 
+ Have you been experiencing pains and injuries after starting your new hobby
+ in running? Perhaps, you're feeling some pain in your legs, or ankles, etc.
+ Aside from strength training, one thing you should do is get your gait
+ analyzed. However, a full gait analysis isn't cheap and may not be always 
+ necessary. Our project here aims to help give quick, accessible advice to runners, 
+ providing feedback on the deviation of their arms from the ideal 90 degree angle,
+ the difference between stride length of their left and right foot, the 
+ deviation of their back leg from the ideal 180 degree angle, and the cadence
+ of the runner. You, the user, can simply upload a short video of you running, and
+ you will receive feedback in a matter of moments. 
 
-TODO: 
+ TODO:
+ Include the link to your Devpost project page here: 
+ (https://mosa-spring-hackathon-2024.devpost.com/)
 
 **Authors**
 
-TODO: add devpost ID's
-
-- Ryan Lim Pangilinan - Devpost ID – Penn email - [GitHub](https://github.com/ErPang97)
+- Ryan Lim Pangilinan - ryanpang – ryanpang@seas.upenn.edu - [GitHub](https://github.com/ErPang97)
 - Samuel Lee - leesamuel423 – samlee1@seas.upenn.edu - [GitHub](https://github.com/leesamuel423)
-- Cara Ma - Devpost ID – Penn email - [GitHub](https://github.com/carateoong)
-- Katherine Zhang - Devpost ID – Penn email - [GitHub](https://github.com/zhkat)
+- Cara Ma - cteoong – cteoong@seas.upenn.edu - [GitHub](https://github.com/carateoong)
+- Katherine Zhang - zhkat – zhkat@seas.upenn.edu - [GitHub](https://github.com/zhkat)
 
 
 ## **Usage**
@@ -26,11 +37,12 @@ TODO:
 
 ### **Prerequisites** 
 
-TODO:
+Ensure you have Python 3.8+ and pip installed on your system. Additionally,
+ensure you have Node.js installed.
 
 ### **Installation**
 
-Ensure you have Python 3.8+ and pip installed on your system. Follow these steps to install:
+Follow these steps to install:
 
 1. Clone the project repository:
 
@@ -126,5 +138,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-TODO:
