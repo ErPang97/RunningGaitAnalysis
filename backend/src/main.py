@@ -1,3 +1,8 @@
+from datamanagement.VideoReader import *
+from processor.Processor import *
+from ui.DisplayData import *
+
+
 def main():
     # Get filename from argument to main
     filename = sys.arg[1]
@@ -12,7 +17,7 @@ def main():
     if processor is None:
         return None
 
-    # TODO: Analyze gait
+    return DisplayData(processor)
 
 
 if __name__ == "__main__":

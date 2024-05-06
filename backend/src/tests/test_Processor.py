@@ -1,8 +1,7 @@
 import unittest
-from processor.Processsor import *
 
 
-class TestProcessor(unittest.TestCase):
+class TestProcessor(unittest.TestCase, processor.Processsor):
 
     def test_distance(self):
         # test 1:
@@ -20,6 +19,7 @@ class TestProcessor(unittest.TestCase):
         self.assertAlmostEqual(
             90, angle(p1, p2, p3)
         )
+
 
 if __name__ == '__main__':
     unittest.main()

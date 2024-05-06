@@ -1,8 +1,8 @@
 from ultralytics import YOLO
 import numpy, scipy.optimize
-from util.PoseEstimation import *
 import cv2
 import math
+
 
 class VideoReader(object):
 
@@ -15,19 +15,19 @@ class VideoReader(object):
         :return: dictionary containing list of keypoints for right and left shoulder, elbow, wrist, hip, knee, and ankle and right and left gait duration and start
         """
         # Check if there is one person in video
-        if not self.__detect_person:
+        if not self._detect_person:
             return None
-        
+
         # Open the video file
         cap = cv2.VideoCapture(filename)
-        
+
         # Load a pre-trained model for Pose Estimation
         model_path = "yolov8n-pose.pt"
         pose_model = PoseEstimation(model_path)
 
         # Initialize dictionary for store data
-        data = {'right_shoulder': [], 'right_elbow': [], 'right_wrist': [], 
-                'left_shoulder': [], 'left_elbow': [], 'left_wrist': [], 
+        data = {'right_shoulder': [], 'right_elbow': [], 'right_wrist': [],
+                'left_shoulder': [], 'left_elbow': [], 'left_wrist': [],
                 'right_hip': [], 'right_knee': [], 'right_ankle': [],
                 'left_hip': [], 'left_knee': [], 'left_ankle': [],
                 }
@@ -79,23 +79,18 @@ class VideoReader(object):
         data['total_frames'] = cap.get(cv2.CAP_PROP_FRAME_COUNT)
         data['fps'] = cap.get(cv2.CAP_PROP_FPS)
 
-
         # Release the video capture object and close the display window
         cap.release()
         cv2.destroyAllWindows()
 
-        right_period_phase = self.__calculate_period_phase(data['right_ankle'])
+        right_period_phase = self._calculate_period_phase(data['right_ankle'])
         data['right_gait_duration'] = right_period_phase['period']
         data['right_gait_start'] = right_period_phase['phase']
-        left_period_phase = self.__calculate_period_phase(data['left_ankle'])
+        left_period_phase = self._calculate_period_phase(data['left_ankle'])
         data['left_gait_duration'] = left_period_phase['period']
         data['left_gait_start'] = left_period_phase['phase']
 
-        # Calculate gait per minute
-        gait_per_minute = __calculate
-
-
-    def __detect_person(self):
+    def _detect_person(self):
         """
         determines whether there is one person in image or video
         :return: True if there is one person in image or video, False otherwise
@@ -112,7 +107,8 @@ class VideoReader(object):
             return False
         return True
 
-    def __calculate_period_phase(self, y_coordinates):
+    @staticmethod
+    def _calculate_period_phase(y_coordinates):
         """
         calculates the duraction of a gait and the start of one complete gait 
         models y coordinates of ankle to sine function
@@ -128,20 +124,10 @@ class VideoReader(object):
         guess_offset = numpy.mean(y_coordinates)
         guess = numpy.array([guess_amp, 2. * numpy.pi * guess_freq, 0., guess_offset])
 
-        def sine_function(t, A, w, p, c):  return A * numpy.sin(w * t + p) + c
+        def sine_function(t, A, w, p, c): return A * numpy.sin(w * t + p) + c
 
         popt, pcov = scipy.optimize.curve_fit(sine_function, times, y_coordinates, p0=guess)
         A, w, p, c = popt
         f = w / (2. * numpy.pi)
         T = 1. / f
         return {'period': T, 'phase': p}
-
-    def __calculate_gait_per_minute(self, data, cap):
-        # Get total number of frames in the video
-        video_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-
-        #Get number of frames for each gait
-        right_gait_duration = data['right_gait_duration']
-        left_gait_duration = data['left_gait_duration']
-        return math.floor(video_frames /(right_gait_duration + left_gait_duration) * 2)
-
