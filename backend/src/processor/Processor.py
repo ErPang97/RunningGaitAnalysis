@@ -3,12 +3,6 @@ import math
 import os
 import sys
 
-# import from subdirectory in parent directory named processor
-script_dir = os.path.dirname(__file__)
-mymodule_dir = os.path.join(script_dir, '..', 'datamanagement')
-sys.path.append(mymodule_dir)
-import VideoReader
-
 
 class Processor(object):
 
