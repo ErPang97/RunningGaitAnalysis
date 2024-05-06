@@ -23,7 +23,7 @@ class VideoReader(object):
 
         # Load a pre-trained model for Pose Estimation
         model_path = "yolov8n-pose.pt"
-        pose_model = PoseEstimation(model_path)
+        pose_model = YOLO(model_path)
 
         # Initialize dictionary for store data
         data = {'right_shoulder': [], 'right_elbow': [], 'right_wrist': [],

@@ -1,26 +1,29 @@
 import unittest
 import numpy as np
+import os
+import sys
+
+# import from subdirectory in parent directory named datamanagement
+script_dir = os.path.dirname(__file__)
+mymodule_dir = os.path.join(script_dir, '..', 'datamanagement')
+sys.path.append(mymodule_dir)
+import VideoReader
 
 
-class TestVideoReader(unittest.TestCase, datamanagement.VideoReader):
+class TestVideoReader(unittest.TestCase):
 
     def test_detect_person(self):
         # test 1:
 
-        # Load a pre-trained model for Pose Estimation
-        model_path = "yolov8n-pose.pt"
-        pose_model = PoseEstimation(model_path)
-
         # Open the image file
-        img_path = "../input_videos/run.png"
-        data_manager = DataManagement(img_path)
+        img_path = "../../../input_videos/run.png"
+        data_manager = VideoReader.VideoReader(img_path)
 
         self.assertTrue(
-            data_manager.detect_person(pose_model)
+            data_manager._detect_person()
         )
 
     def test_calculate_period_phase(self):
-
         # Create coordinates for a sine wave
         x_array = []
         y_array = []
