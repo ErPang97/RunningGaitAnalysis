@@ -1,6 +1,7 @@
 import numpy as np
 import math
-from datamanagement.VideoReader import *
+import os
+import sys
 
 
 class Processor(object):
