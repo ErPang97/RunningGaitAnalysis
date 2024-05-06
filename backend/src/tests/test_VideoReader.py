@@ -30,10 +30,10 @@ class TestVideoReader(unittest.TestCase):
         coordinates = []
         x = np.arange(0, 5 * np.pi, 0.1)
         y = np.sin(x)
-        for i in x:
+        for i in range(len(x)):
             coordinates.append([x[i], y[i]])
 
-        result = VideoReader.__calculate_period_phase(coordinates)
+        result = VideoReader.VideoReader('nofile')._calculate_period_phase(coordinates)
         self.assertTrue(result.get("period"), 2 * np.pi)
         self.assertTrue(result.get("phase"), 0)
 
