@@ -14,6 +14,9 @@ class Processor(object):
         calculates average arm angle difference from ideal 90 degrees for right and left arms
         :return: 2-tuple, in which first value is average right arm angle difference from 90 degrees and second value is left arm angle difference from 90 degrees
         """
+        if self.data is None:
+            return None
+
         n = len(self.data['right_shoulder'])
         right_arm_angle_difference = 0
         left_arm_angle_difference = 0

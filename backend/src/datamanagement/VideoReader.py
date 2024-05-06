@@ -1,3 +1,4 @@
+import torch
 from ultralytics import YOLO
 import numpy, scipy.optimize
 import cv2
@@ -38,8 +39,10 @@ class VideoReader(object):
             success, frame = cap.read()
 
             if success:
+                frame_tensor = torch.from_numpy(frame)
+
                 # Run YOLOv8 inference on the frame
-                results = pose_model.model(frame)
+                results = pose_model.model(frame_tensor)
 
                 # Visualize the results on the frame
                 annotated_frame = results[0].plot()
@@ -115,12 +118,14 @@ class VideoReader(object):
         :param: coordinates: list of coordinates of ankle
         :return: dictionary containing duration of gait (period) and start of one complete gait (phase)
         """
-        times = numpy.array(range(len(coordinates)))
+        times = numpy.array(range(0, len(coordinates), 1))
         y_coordinates = []
         for coordinate in coordinates:
             y_coordinates.append(coordinate[1])
         y_coordinates = numpy.array(y_coordinates)
-        ff = numpy.fft.fftfreq(len(times), (times[1] - times[0]))
+        if len(times) == 0:
+            return {'period': 0, 'phase': 0}
+        ff = numpy.fft.fftfreq(len(times), 1)
         Fyy = abs(numpy.fft.fft(y_coordinates))
         guess_frequency = abs(ff[numpy.argmax(Fyy[1:]) + 1])
         guess_amplitude = numpy.std(y_coordinates) * 2.0 ** 0.5
