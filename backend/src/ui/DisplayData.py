@@ -1,4 +1,4 @@
-from processor.Processor import *
+from ..processor.Processor import *
 
 
 class DisplayData(object):

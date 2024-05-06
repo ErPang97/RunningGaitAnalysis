@@ -1,19 +1,20 @@
 import numpy as np
 import math
-from datamanagement.VideoReader import *
+import os
+import sys
 
 
 class Processor(object):
 
     def __init__(self, video_reader):
-        self.data = video_reader.get_data
+        self.data = video_reader.get_data()
 
     def arm_analytics(self):
         """
         calculates average arm angle difference from ideal 90 degrees for right and left arms
         :return: 2-tuple, in which first value is average right arm angle difference from 90 degrees and second value is left arm angle difference from 90 degrees
         """
-        n = len(data['right_shoulder'])
+        n = len(self.data['right_shoulder'])
         right_arm_angle_difference = 0
         left_arm_angle_difference = 0
         for i in range(n):
@@ -35,12 +36,12 @@ class Processor(object):
         gait_duration = self.data['right_gait_duration']
         back_leg_difference = 0
         n = 0
-        for i in range(0, len(data['right_ankle']), gait_duration):
+        for i in range(0, len(self.data['right_ankle']), gait_duration):
             min_y = float('-inf')
             min_index = i
             for j in range(i, i + gait_duration, 1):
-                if data['right_ankle'][j][1] < min_y:
-                    min_y = data['right_ankle'][j][1]
+                if self.data['right_ankle'][j][1] < min_y:
+                    min_y = self.data['right_ankle'][j][1]
                     min_index = j
             back_leg_difference += Processor._leg_angle_difference(self.data['right_hip'][min_index],
                                                                     self.data['right_knee'][min_index],
@@ -59,11 +60,11 @@ class Processor(object):
             The number of gaits per minute. Each gait is one step
         """
         # Get frames per gait
-        right_gait_duration = self.data['right_gait_duration']
-        left_gait_duration = self.data['left_gait_duration']
-        gait_per_frame = 1/(self.data['total_frames'] / (right_gait_duration + left_gait_duration) * 2)
+        right_gait_duration = data['right_gait_duration']
+        left_gait_duration = data['left_gait_duration']
+        gait_per_frame = 1/(data['total_frames'] / (right_gait_duration + left_gait_duration) * 2)
 
-        return gait_per_frame * self.data['fps'] * 60
+        return gait_per_frame * data['fps'] * 60
 
     @staticmethod
     def _distance(p1, p2):
