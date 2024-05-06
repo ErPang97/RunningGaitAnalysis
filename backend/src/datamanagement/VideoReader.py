@@ -83,10 +83,10 @@ class VideoReader(object):
         cap.release()
         cv2.destroyAllWindows()
 
-        right_period_phase = self._calculate_period_phase(data['right_ankle'])
+        right_period_phase = VideoReader._calculate_period_phase(data['right_ankle'])
         data['right_gait_duration'] = right_period_phase['period']
         data['right_gait_start'] = right_period_phase['phase']
-        left_period_phase = self._calculate_period_phase(data['left_ankle'])
+        left_period_phase = VideoReader._calculate_period_phase(data['left_ankle'])
         data['left_gait_duration'] = left_period_phase['period']
         data['left_gait_start'] = left_period_phase['phase']
 
@@ -108,26 +108,29 @@ class VideoReader(object):
         return True
 
     @staticmethod
-    def _calculate_period_phase(y_coordinates):
+    def _calculate_period_phase(coordinates):
         """
-        calculates the duraction of a gait and the start of one complete gait 
+        calculates the duration of a gait and the start of one complete gait
         models y coordinates of ankle to sine function
-        :param: y_coordinates: list of y coordinates of ankle
+        :param: coordinates: list of coordinates of ankle
         :return: dictionary containing duration of gait (period) and start of one complete gait (phase)
         """
-        times = numpy.array(range(0, len(y_coordinates), 1))
+        times = numpy.array(range(len(coordinates)))
+        y_coordinates = []
+        for coordinate in coordinates:
+            y_coordinates.append(coordinate[1])
         y_coordinates = numpy.array(y_coordinates)
         ff = numpy.fft.fftfreq(len(times), (times[1] - times[0]))
         Fyy = abs(numpy.fft.fft(y_coordinates))
-        guess_freq = abs(ff[numpy.argmax(Fyy[1:]) + 1])
-        guess_amp = numpy.std(y_coordinates) * 2. ** 0.5
+        guess_frequency = abs(ff[numpy.argmax(Fyy[1:]) + 1])
+        guess_amplitude = numpy.std(y_coordinates) * 2.0 ** 0.5
         guess_offset = numpy.mean(y_coordinates)
-        guess = numpy.array([guess_amp, 2. * numpy.pi * guess_freq, 0., guess_offset])
+        guess = numpy.array([guess_amplitude, 2.0 * numpy.pi * guess_frequency, 0.0, guess_offset])
 
         def sine_function(t, A, w, p, c): return A * numpy.sin(w * t + p) + c
 
         popt, pcov = scipy.optimize.curve_fit(sine_function, times, y_coordinates, p0=guess)
         A, w, p, c = popt
-        f = w / (2. * numpy.pi)
-        T = 1. / f
+        f = w / (2.0 * numpy.pi)
+        T = 1.0 / f
         return {'period': T, 'phase': p}
