@@ -1,10 +1,43 @@
+import { useState } from 'react'
+import axios from 'axios'
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaqAccordion } from "@/components/FaqAccordion";
+import { Button } from "./components/ui/button";
 
 function App() {
+  const [file, setFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleSubmit = async () => {
+    if (!file) {
+      alert('Please select a file');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      await axios.post('http://127.0.0.1:5000/uploadVideo', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      // Handle success, e.g., show a success message
+      alert('File uploaded successfully');
+    } catch (error) {
+      // Handle error, e.g., show an error message
+      console.error('Error uploading file:', error);
+      alert('Error uploading file. Please try again.');
+    }
+  };
+
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="flex flex-col min-h-screen">
@@ -14,12 +47,16 @@ function App() {
             <ModeToggle />
           </div>
 
+
           <div className="mb-4">
             <Label htmlFor="video" className="block mb-2">Attach Video</Label>
             <div className="max-w-lg">
-              <Input id="video" type="file" className="w-1/2" />
+              <Input id="video" type="file" className="w-1/2" onChange={handleFileChange}/>
             </div>
           </div>
+
+          <Button className="mb-4 max-w-64" variant="secondary" onClick={handleSubmit}>Get Your Analysis</Button>
+        
 
           <div className="flex-grow p-4 rounded-lg mb-4 border">
             <Label>Results</Label>

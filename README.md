@@ -15,7 +15,7 @@ TODO:
 TODO: add devpost ID's
 
 - Ryan Lim Pangilinan - Devpost ID – Penn email - [GitHub](https://github.com/ErPang97)
-- Samuel Lee - Devpost ID – Penn email - [GitHub](https://github.com/leesamuel423)
+- Samuel Lee - leesamuel423 – samlee1@seas.upenn.edu - [GitHub](https://github.com/leesamuel423)
 - Cara Ma - Devpost ID – Penn email - [GitHub](https://github.com/carateoong)
 - Katherine Zhang - Devpost ID – Penn email - [GitHub](https://github.com/zhkat)
 
@@ -39,7 +39,13 @@ git clone https://github.com/ErPang97/RunningGaitAnalysis
 cd RunningGaitAnalysis
 ```
 
-2. Create a virtual environment. A virtual environment is recommended to keep dependencies required by the project separate and to avoid conflicts with other projects.
+#### Backend Server
+2. Make the backend your working directory:
+```bash
+cd backend
+```
+
+3. Create a virtual environment. A virtual environment is recommended to keep dependencies required by the project separate and to avoid conflicts with other projects.
 
 ```bash
 # For Unix or MacOS
@@ -49,7 +55,7 @@ python3 -m venv venv
 python -m venv venv
 ```
 
-3. Activate the virtual environment:
+4. Activate the virtual environment:
 
 ```bash
 # For Unix or MacOS
@@ -59,10 +65,31 @@ source venv/bin/activate
 venv\Scripts\activate
 ```
 
-4. Install required python packages specified in the requirements.txt file:
+5. Install required python packages specified in the requirements.txt file:
 
 ```bash
 pip install -r requirements.txt
+```
+
+6. Run your flask backend server:
+```bash
+flask run
+```
+
+#### Frontend Client
+7. Make the frontend your working directory:
+```bash
+cd frontend
+```
+
+8. Install required node packages:
+```bash
+npm i
+```
+
+9. Run the frontend:
+```bash
+npm run dev
 ```
 
 ### **Deployment**
@@ -79,6 +106,25 @@ TODO:
 
 TODO:
 
-## **License**
+## MIT License
+Copyright (c) 2024
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 TODO:
