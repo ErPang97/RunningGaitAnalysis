@@ -76,6 +76,10 @@ class VideoReader(object):
                 # Break the loop if the end of the video is reached
                 break
 
+        data['total_frames'] = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        data['fps'] = cap.get(cv2.CAP_PROP_FPS)
+
+
         # Release the video capture object and close the display window
         cap.release()
         cv2.destroyAllWindows()
