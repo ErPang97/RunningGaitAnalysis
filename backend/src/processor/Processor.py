@@ -1,5 +1,7 @@
 import numpy as np
 import math
+from datamanagement.VideoReader import *
+
 
 class Processor(object):
 
@@ -9,29 +11,28 @@ class Processor(object):
     def arm_analytics(self):
         """
         calculates average arm angle difference from ideal 90 degrees for right and left arms
-        :return: dictionary containing average right and left arm angle difference from 90 degrees
+        :return: 2-tuple, in which first value is average right arm angle difference from 90 degrees and second value is left arm angle difference from 90 degrees
         """
         n = len(data['right_shoulder'])
         right_arm_angle_difference = 0
         left_arm_angle_difference = 0
         for i in range(n):
-            right_arm_angle_difference += Processor.__arm_angle_difference(self.data['right_shoulder'][i],
+            right_arm_angle_difference += Processor._arm_angle_difference(self.data['right_shoulder'][i],
                                                                            self.data['right_elbow'][i],
                                                                            self.data['right_wrist'][i])
-            left_arm_angle_difference += Processor.__arm_angle_difference(self.data['left_shoulder'][i],
+            left_arm_angle_difference += Processor._arm_angle_difference(self.data['left_shoulder'][i],
                                                                           self.data['left_elbow'][i],
                                                                           self.data['left_wrist'][i])
         right_arm_angle_difference /= n
         left_arm_angle_difference /= n
-        return {'right arm angle difference': right_arm_angle_difference,
-                'left arm angle difference': left_arm_angle_difference}
+        return right_arm_angle_difference, left_arm_angle_difference
 
     def feet_analytics(self):
         """
         calculates average back leg angle difference from ideal 180 degrees when leg strikes ground
         Returns: average back leg angle difference from 180 degrees when leg strikes ground, -1 if less than one stride detected
         """
-        gait_duration = Processor.calculate_period(self.data['right_ankle'])
+        gait_duration = self.data['right_gait_duration']
         back_leg_difference = 0
         n = 0
         for i in range(0, len(data['right_ankle']), gait_duration):
@@ -41,7 +42,7 @@ class Processor(object):
                 if data['right_ankle'][j][1] < min_y:
                     min_y = data['right_ankle'][j][1]
                     min_index = j
-            back_leg_difference += Processor.__leg_angle_difference(self.data['right_hip'][min_index],
+            back_leg_difference += Processor._leg_angle_difference(self.data['right_hip'][min_index],
                                                                     self.data['right_knee'][min_index],
                                                                     self.data['right_ankle'][min_index])
             n += 1
@@ -50,36 +51,22 @@ class Processor(object):
         back_leg_difference /= n
         return back_leg_difference
 
-    @staticmethod
-    def calculate_period(coordinates):
+    def calculate_gait_per_minute(self, data):
         """
-        calculates the duration of a gait and the start of one complete gait
-        models y coordinates of ankle to sine function
-        :param: coordinates: list of coordinates of ankle
-        :return: dictionary containing duration of gait (period) and start of one complete gait (phase)
+        Args:
+            data: dictionary of data
+        Returns:
+            The number of gaits per minute. Each gait is one step
         """
-        times = numpy.array(range(len(coordinates)))
-        y_coordinates = []
-        for coordinate in coordinates:
-            y_coordinates.append(coordinate[1])
-        y_coordinates = numpy.array(y_coordinates)
-        ff = numpy.fft.fftfreq(len(times), (times[1] - times[0]))
-        Fyy = abs(numpy.fft.fft(y_coordinates))
-        guess_frequency = abs(ff[numpy.argmax(Fyy[1:]) + 1])
-        guess_amplitude = numpy.std(y_coordinates) * 2. ** 0.5
-        guess_offset = numpy.mean(y_coordinates)
-        guess = numpy.array([guess_amplitude, 2. * numpy.pi * guess_frequency, 0., guess_offset])
+        # Get frames per gait
+        right_gait_duration = self.data['right_gait_duration']
+        left_gait_duration = self.data['left_gait_duration']
+        gait_per_frame = 1/(self.data['total_frames'] / (right_gait_duration + left_gait_duration) * 2)
 
-        def sine_function(t, A, w, p, c): return A * numpy.sin(w * t + p) + c
-
-        popt, pcov = scipy.optimize.curve_fit(sine_function, times, y_coordinates, p0=guess)
-        A, w, p, c = popt
-        f = w / (2. * numpy.pi)
-        T = 1. / f
-        return T
+        return gait_per_frame * self.data['fps'] * 60
 
     @staticmethod
-    def __distance(p1, p2):
+    def _distance(p1, p2):
         """ Given points, p1 and p2, find the distance between two points
         Args:
             p1, p2 - points given as a np.array corresponding to the
@@ -90,7 +77,7 @@ class Processor(object):
         return np.sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2)
 
     @staticmethod
-    def __angle(p1, p2, p3):
+    def _angle(p1, p2, p3):
         """Given three points, p1, p2, p3, calculate the angle formed
         Args:
             p1, p2, p3 - points given as a np.array corresponding to
@@ -104,7 +91,7 @@ class Processor(object):
         return np.arccos(cosine_angle) * (180.0 / np.pi)
 
     @staticmethod
-    def __arm_angle_difference(shoulder, elbow, wrist):
+    def _arm_angle_difference(shoulder, elbow, wrist):
         """
         Args:
             shoulder, elbow, wrist - points given as a np.array corresponding to
@@ -113,10 +100,10 @@ class Processor(object):
             the absolute difference between current arm angle and 90 degrees,
             the ideal arm angle
         """
-        return abs(Processor.__angle(shoulder, elbow, wrist) - 90)
+        return abs(Processor._angle(shoulder, elbow, wrist) - 90)
 
     @staticmethod
-    def __leg_angle_difference(hip, knee, ankle):
+    def _leg_angle_difference(hip, knee, ankle):
         """
         Args:
             hip, knee, ankle - points given as a np.array corresponding to
@@ -125,18 +112,5 @@ class Processor(object):
             the absolute difference between current leg angle and 180 degrees, the ideal leg angle
         """
         # How do we determine which is the back leg? Do we have everyone face one direction?
-        return abs(Processor.__angle(hip, knee, ankle) - 180)
+        return abs(Processor._angle(hip, knee, ankle) - 180)
 
-    def __calculate_gait_per_minute(self, data):
-        """
-        Args:
-            data: dictionary of data
-        Returns:
-            The number of gaits per minute. Each gait is one step
-        """
-        # Get frames per gait
-        right_gait_duration = data['right_gait_duration']
-        left_gait_duration = data['left_gait_duration']
-        gait_per_frame = 1/(data['total_frames'] / (right_gait_duration + left_gait_duration) * 2)
-
-        return gait_per_frame * data['fps'] * 60

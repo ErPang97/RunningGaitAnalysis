@@ -1,3 +1,8 @@
+from datamanagement.VideoReader import *
+from processor.Processor import *
+from ui.DisplayData import *
+
+
 def main():
     # Get filename from argument to main
     filename = sys.arg[1]
@@ -10,9 +15,9 @@ def main():
 
     # Check if video has one person
     if processor is None:
-        return "Detected zero people or more than one person.\nPlease provide a video with one person."
+        return None
 
-    return DisplayUserInterface(processor).display_text()
+    return DisplayData(processor)
 
 
 if __name__ == "__main__":
