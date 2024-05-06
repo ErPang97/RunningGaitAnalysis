@@ -10,9 +10,9 @@ def main():
 
     # Check if video has one person
     if processor is None:
-        return None
+        return "Detected zero people or more than one person.\nPlease provide a video with one person."
 
-    # TODO: Analyze gait
+    return DisplayUserInterface(processor).display_text()
 
 
 if __name__ == "__main__":
