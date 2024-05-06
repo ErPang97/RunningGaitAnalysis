@@ -1,8 +1,10 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, jsonify
+from flask import Flask, flash, request, redirect, jsonify
 from flask_cors import CORS
-from flask import send_from_directory
+# from flask import send_from_directory
 from werkzeug.utils import secure_filename
+
+from src.run import run
 
 
 UPLOAD_FOLDER = '../temp/uploads/'
@@ -36,7 +38,8 @@ def upload_file():
         filename = secure_filename(file.filename)
         # saves the uploaded file in the temp folder
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return jsonify({'message': 'File uploaded successfully'}), 200
+        return jsonify({'message': run()}), 200
     else:
         return jsonify({'message': 'File upload failed'}), 400
+
 
