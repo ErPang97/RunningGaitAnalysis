@@ -33,7 +33,10 @@
 
 ## **Usage**
 
-TODO: 
+The user can get their running gait analzyed my uploading a video of themselves running, and the application will display to the user information on the deviation of their arms from the ideal 90 degree angle,
+the difference between stride length of their left and right foot, the 
+deviation of their back leg from the ideal 180 degree angle, and the cadence
+of the runner.
 
 ### **Prerequisites** 
 
@@ -104,19 +107,15 @@ npm i
 npm run dev
 ```
 
-### **Deployment**
-
-TODO:
-
 ## **Additional information**
 
 ### **Tools used**
 
-TODO:
+YOLOv8, Python, TypeScript, JavaScript, HTML, CSS
 
 ## **Acknowledgments**
 
-TODO:
+Thank you to MCIT for imparting valuable knowledge on us. Thank you to MOSA for hosting this hackathon. 
 
 ## MIT License
 Copyright (c) 2024
