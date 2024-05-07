@@ -75,10 +75,30 @@ function App() {
 
           <div className="flex-grow p-4 rounded-lg mb-4 border">
             <Label>Results</Label>
-            {result &&
-              <p1>Right Arm Angle Difference: </p1>
-            }
-
+            {result && (
+              <>
+                <div className="result-item mb-4">
+                  <span className="font-bold">Right Arm Angle Difference: </span>
+                  <span className="text-lg">{result.message.message[0]}°</span>
+                </div>
+                <div className="result-item mb-4">
+                  <span className="font-bold">Left Arm Angle Difference: </span>
+                  <span className="text-lg">{result.message.message[1]}°</span>
+                </div>
+                <div>The ideal arm angle differences should be close to 90°. Your value indicates an average {result.message.message[0]}° deviation from the ideal 90° for your right arm and {result.message.message[1]}° different for your left arm!</div>
+                <div></div>
+                <div className="result-item mb-4">
+                  <span className="font-bold">Trailing Leg Angle Difference: </span>
+                  <span className="text-lg">{result.message.message[2]}°</span>
+                </div>
+                <div>The ideal trailing leg angle differences should be close to 180°. Your value indicates an average of {result.message.message[2]}° deviation from the ideal 180°</div>
+                <div className="result-item mb-4">
+                  <span className="font-bold">Steps Per Minute: </span>
+                  <span className="text-lg">{result.message.message[3] * 2}</span>
+                </div>
+                <div>The ideal steps per minute should be in the range of 150 - 170 steps/minute. Your value indicates an average of {result.message.message[3]} steps per minute!</div>
+              </>
+            )}
           </div>
         </div>
 

@@ -21,6 +21,7 @@ def run(filename, app):
 
         display_data = DisplayData(processor)
         data = display_data.send_results()
+
         return {'message': data}
     except Exception as e:
         traceback_info = traceback.format_exc()
