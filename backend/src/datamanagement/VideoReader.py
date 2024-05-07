@@ -44,8 +44,8 @@ class VideoReader(object):
                 # Visualize the results on the frame
                 annotated_frame = results[0].plot()
 
-                # Display the annotated frame
-                cv2.imshow("YOLOv8 Inference", annotated_frame)
+                # # Display the annotated frame
+                # cv2.imshow("YOLOv8 Inference", annotated_frame)
 
                 # Check if the keypoints attribute is present in the results
                 if hasattr(results[0], 'keypoints'):
