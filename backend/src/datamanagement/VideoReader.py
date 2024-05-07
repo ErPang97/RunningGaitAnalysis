@@ -39,7 +39,7 @@ class VideoReader(object):
 
             if success:
                 # Run YOLOv8 inference on the frame
-                results = pose_model.model(frame)
+                results = pose_model(frame)
 
                 # Visualize the results on the frame
                 annotated_frame = results[0].plot()
@@ -90,6 +90,8 @@ class VideoReader(object):
         data['left_gait_duration'] = left_period_phase['period']
         data['left_gait_start'] = left_period_phase['phase']
 
+        return data
+
     def _detect_person(self):
         """
         determines whether there is one person in image or video
@@ -115,12 +117,12 @@ class VideoReader(object):
         :param: coordinates: list of coordinates of ankle
         :return: dictionary containing duration of gait (period) and start of one complete gait (phase)
         """
-        times = numpy.array(range(len(coordinates)))
+        times = numpy.array(range(0, len(coordinates)))
         y_coordinates = []
         for coordinate in coordinates:
             y_coordinates.append(coordinate[1])
         y_coordinates = numpy.array(y_coordinates)
-        ff = numpy.fft.fftfreq(len(times), (times[1] - times[0]))
+        ff = numpy.fft.fftfreq(len(times), 1)
         Fyy = abs(numpy.fft.fft(y_coordinates))
         guess_frequency = abs(ff[numpy.argmax(Fyy[1:]) + 1])
         guess_amplitude = numpy.std(y_coordinates) * 2.0 ** 0.5

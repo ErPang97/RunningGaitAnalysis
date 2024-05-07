@@ -14,31 +14,38 @@ class Processor(object):
         calculates average arm angle difference from ideal 90 degrees for right and left arms
         :return: 2-tuple, in which first value is average right arm angle difference from 90 degrees and second value is left arm angle difference from 90 degrees
         """
-        n = len(self.data['right_shoulder'])
-        right_arm_angle_difference = 0
-        left_arm_angle_difference = 0
-        for i in range(n):
-            right_arm_angle_difference += Processor._arm_angle_difference(self.data['right_shoulder'][i],
-                                                                           self.data['right_elbow'][i],
-                                                                           self.data['right_wrist'][i])
-            left_arm_angle_difference += Processor._arm_angle_difference(self.data['left_shoulder'][i],
-                                                                          self.data['left_elbow'][i],
-                                                                          self.data['left_wrist'][i])
-        right_arm_angle_difference /= n
-        left_arm_angle_difference /= n
-        return right_arm_angle_difference, left_arm_angle_difference
+        try:
+            n = len(self.data['right_shoulder'])
+            right_arm_angle_difference = 0
+            left_arm_angle_difference = 0
+            for i in range(n):
+                right_arm_angle_difference += Processor._arm_angle_difference(self.data['right_shoulder'][i],
+                                                                               self.data['right_elbow'][i],
+                                                                               self.data['right_wrist'][i])
+                left_arm_angle_difference += Processor._arm_angle_difference(self.data['left_shoulder'][i],
+                                                                              self.data['left_elbow'][i],
+                                                                              self.data['left_wrist'][i])
+            right_arm_angle_difference /= n
+            left_arm_angle_difference /= n
+            return right_arm_angle_difference, left_arm_angle_difference
+        except Exception as e:
+            print(f"Error in arm analytics: {e}")
+            return 0, 0
+
 
     def feet_analytics(self):
         """
         calculates average back leg angle difference from ideal 180 degrees when leg strikes ground
         Returns: average back leg angle difference from 180 degrees when leg strikes ground, -1 if less than one stride detected
         """
-        gait_duration = self.data['right_gait_duration']
+        gait_duration = math.floor(self.data['right_gait_duration'])
         back_leg_difference = 0
         n = 0
         for i in range(0, len(self.data['right_ankle']), gait_duration):
             min_y = float('-inf')
             min_index = i
+            if i + gait_duration > len(self.data['right_ankle']):
+                break
             for j in range(i, i + gait_duration, 1):
                 if self.data['right_ankle'][j][1] < min_y:
                     min_y = self.data['right_ankle'][j][1]
@@ -52,19 +59,17 @@ class Processor(object):
         back_leg_difference /= n
         return back_leg_difference
 
-    def calculate_gait_per_minute(self, data):
+    def calculate_gait_per_minute(self):
         """
-        Args:
-            data: dictionary of data
         Returns:
             The number of gaits per minute. Each gait is one step
         """
         # Get frames per gait
-        right_gait_duration = data['right_gait_duration']
-        left_gait_duration = data['left_gait_duration']
-        gait_per_frame = 1/(data['total_frames'] / (right_gait_duration + left_gait_duration) * 2)
+        right_gait_duration = self.data['right_gait_duration']
+        left_gait_duration = self.data['left_gait_duration']
+        gait_per_frame = 1/(self.data['total_frames'] / (right_gait_duration + left_gait_duration) * 2)
 
-        return gait_per_frame * data['fps'] * 60
+        return gait_per_frame * self.data['fps'] * 60
 
     @staticmethod
     def _distance(p1, p2):
@@ -88,7 +93,8 @@ class Processor(object):
         """
         vec_p1 = p1 - p2
         vec_p3 = p3 - p2
-        cosine_angle = np.dot(vec_p1, vec_p3) / (np.linalg.norm(vec_p1) * np.linalg.norm(vec_p3))
+        denom = np.linalg.norm(vec_p1) * np.linalg.norm(vec_p3)
+        cosine_angle = 0 if denom == 0 else np.dot(vec_p1, vec_p3) / denom
         return np.arccos(cosine_angle) * (180.0 / np.pi)
 
     @staticmethod
