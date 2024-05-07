@@ -15,9 +15,7 @@ class Processor(object):
         :return: 2-tuple, in which first value is average right arm angle difference from 90 degrees and second value is left arm angle difference from 90 degrees
         """
         try:
-            if self.data is None:
-                return None
-
+            print('I am in arm analytics')
             n = len(self.data['right_shoulder'])
             right_arm_angle_difference = 0
             left_arm_angle_difference = 0
