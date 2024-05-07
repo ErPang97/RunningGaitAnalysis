@@ -19,7 +19,9 @@ def run(filename, app):
         if processor is None:
             return {'error': 'Video does not contain a person'}
 
-        return {'data': DisplayData(processor)}
+        display_data = DisplayData(processor)
+        data = display_data.send_results()
+        return {'message': data}
     except Exception as e:
         traceback_info = traceback.format_exc()
         return {'message': 'in error run.py', 'error': str(e), 'traceback': traceback_info}

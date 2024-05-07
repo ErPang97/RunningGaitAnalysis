@@ -44,8 +44,8 @@ class VideoReader(object):
                 # Visualize the results on the frame
                 annotated_frame = results[0].plot()
 
-                # # Display the annotated frame
-                # cv2.imshow("YOLOv8 Inference", annotated_frame)
+                # Display the annotated frame
+                cv2.imshow("YOLOv8 Inference", annotated_frame)
 
                 # Check if the keypoints attribute is present in the results
                 if hasattr(results[0], 'keypoints'):
@@ -90,7 +90,7 @@ class VideoReader(object):
         data['left_gait_duration'] = left_period_phase['period']
         data['left_gait_start'] = left_period_phase['phase']
 
-        print("THIS IS THE DATA HAHAHAHAHAHAH", data)
+        return data
 
     def _detect_person(self):
         """

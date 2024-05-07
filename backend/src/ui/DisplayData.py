@@ -7,3 +7,6 @@ class DisplayData(object):
         self.right_arm_angle_difference, self.left_arm_angle_difference = processor.arm_analytics()
         self.back_leg_difference = processor.feet_analytics()
         self.gait_per_minute = processor.calculate_gait_per_minute()
+
+    def send_results(self):
+        return self.right_arm_angle_difference, self.left_arm_angle_difference, self.back_leg_difference, self.gait_per_minute

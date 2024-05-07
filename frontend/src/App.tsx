@@ -75,8 +75,10 @@ function App() {
 
           <div className="flex-grow p-4 rounded-lg mb-4 border">
             <Label>Results</Label>
+            {result &&
+              <p1>Right Arm Angle Difference: </p1>
+            }
 
-            {/* Display your results here */}
           </div>
         </div>
 
