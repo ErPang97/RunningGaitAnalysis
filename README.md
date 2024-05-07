@@ -111,7 +111,7 @@ npm run dev
 
 ### **Tools used**
 
-YOLOv8, Python, TypeScript, JavaScript, HTML, CSS
+YOLOv8, Python, Flask, TypeScript, JavaScript, React, HTML, CSS
 
 ## **Acknowledgments**
 
