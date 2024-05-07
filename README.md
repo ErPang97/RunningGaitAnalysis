@@ -19,9 +19,7 @@
  of the runner. You, the user, can simply upload a short video of you running, and
  you will receive feedback in a matter of moments. 
 
- TODO:
- Include the link to your Devpost project page here: 
- (https://mosa-spring-hackathon-2024.devpost.com/)
+ DEVPOST: (https://mosa-spring-hackathon-2024.devpost.com/)
 
 **Authors**
 
